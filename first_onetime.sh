@@ -1,5 +1,5 @@
 #!/bin/sh
-
+#
 # 手動でやること
 # vmのstorage拡張 8G -> 32G with resize.bat
 # http://qiita.com/takara@github/items/77182fe9d83142be5c5e
@@ -8,7 +8,7 @@
 
 cd $HOME
 sudo yum -y update
-sudo yum -y install mlocate zsh tmux openssl-devel readline-devel zlib-devel
+sudo yum -y install mlocate zsh tmux openssl-devel readline-devel zlib-devel sqlite-devel postgresql-server postgresql-contrib postgresql-devel lsof
 sudo updatedb
 git clone git@github.com:ikneg/dotfiles.git
 cd $HOME/dotfiles
@@ -77,4 +77,14 @@ sudo mv peco_linux_amd64/peco /usr/local/bin
 rm -rf peco_linux_amd64*
 mkdir $HOME/work
 sudo rbenv exec gem install bundler
+sudo rbenv exec gem install sqlite3
 source $HOME/.zprofile
+sudo postgresql-setup initdb
+#sudo sed -e 's/peer$/md5/g' /var/lib/pgsql/data/pg_hba.conf | sudo tee /var/lib/pgsql/data/pg_hba.conf
+#sudo sed -e 's/ident$/md5/g' /var/lib/pgsql/data/pg_hba.conf | sudo tee /var/lib/pgsql/data/pg_hba.conf
+touch temp.conf
+sudo sed -e 's/\(peer\|ident\)$/md5/g' /var/lib/pgsql/data/pg_hba.conf > temp.conf
+sudo mv temp.conf /var/lib/pgsql/data/pg_hba.conf
+echo 'postgres' | sudo passwd --stdin postgres
+sudo systemctl start postgresql
+sudo systemctl enable postgresql

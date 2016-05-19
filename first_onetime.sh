@@ -80,11 +80,11 @@ sudo rbenv exec gem install bundler
 sudo rbenv exec gem install sqlite3
 source $HOME/.zprofile
 sudo postgresql-setup initdb
-#sudo sed -e 's/peer$/md5/g' /var/lib/pgsql/data/pg_hba.conf | sudo tee /var/lib/pgsql/data/pg_hba.conf
-#sudo sed -e 's/ident$/md5/g' /var/lib/pgsql/data/pg_hba.conf | sudo tee /var/lib/pgsql/data/pg_hba.conf
 touch temp.conf
 sudo sed -e 's/\(peer\|ident\)$/md5/g' /var/lib/pgsql/data/pg_hba.conf > temp.conf
 sudo mv temp.conf /var/lib/pgsql/data/pg_hba.conf
-echo 'postgres' | sudo passwd --stdin postgres
 sudo systemctl start postgresql
 sudo systemctl enable postgresql
+# TODO
+# https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-centos-7
+

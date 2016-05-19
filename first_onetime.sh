@@ -1,9 +1,14 @@
 #!/bin/sh
 
-# gitのinstallとssh-keygenしてgithub登録は手動
+# 手動でやること
+# vmのstorage拡張 8G -> 32G with resize.bat
+# http://qiita.com/takara@github/items/77182fe9d83142be5c5e
+# resize2fsのとこだけxfsなのでxfs_growfs使う
+# gitのinstallとssh-keygenしてgithub登録
 
+cd $HOME
 sudo yum -y update
-sudo yum -y install mlocate zsh tmux
+sudo yum -y install mlocate zsh tmux openssl-devel readline-devel zlib-devel
 sudo updatedb
 git clone git@github.com:ikneg/dotfiles.git
 cd $HOME/dotfiles
@@ -36,11 +41,40 @@ ln -s dotfiles/.gitconfig $HOME/.gitconfig
 vim -N -u NONE -i NONE -V1 -e -s --cmd "source ~/.vimrc" --cmd NeoBundleInstall! --cmd qall!
 sudo usermod -s /bin/zsh root
 sudo usermod -s /bin/zsh $USER
-sudo visudo -f /etc/sudoers.d/00_base
-source .tmux.conf
-#source .zprofile
-#source .zshrc
+if sudo grep "^Defaults\s\+!secure_path$" /etc/sudoers
+then
+    echo ''
+else
+    sudo bash -c 'echo "Defaults !secure_path" | (EDITOR="tee -a" visudo)'
+fi
+if sudo grep "^Defaults\s\+env_keep\s\++=\s\+\"PATH RBENV_ROOT\"$" /etc/sudoers
+then
+    echo ''
+else
+    sudo bash -c 'echo "Defaults env_keep += \"PATH RBENV_ROOT\"" | (EDITOR="tee -a" visudo)'
+fi
+export RBENV_ROOT=/usr/local/rbenv
+export PATH=${RBENV_ROOT}/bin:${PATH}
+sudo git clone git://github.com/sstephenson/rbenv.git ${RBENV_ROOT}
+sudo git clone git://github.com/sstephenson/ruby-build.git ${RBENV_ROOT}/plugins/ruby-build
+sudo rbenv init -
+if grep "^export\s\+RBENV_ROOT="/usr/local/rbenv"$" $HOME/.zprofile
+then
+    echo ''
+else
+  zsh -c 'cat <<\__EOT__ >> $HOME/.zprofile
+export RBENV_ROOT=/usr/local/rbenv
+export PATH=$RBENV_ROOT/bin:$PATH
+eval "$(rbenv init -)"
+__EOT__'
+fi
+sudo rbenv install 2.2.3
+sudo rbenv global 2.2.3
+sudo rbenv rehash
 curl -L -O https://github.com/peco/peco/releases/download/v0.2.0/peco_linux_amd64.tar.gz
 tar -zxvf peco_linux_amd64.tar.gz
 sudo mv peco_linux_amd64/peco /usr/local/bin
 rm -rf peco_linux_amd64*
+mkdir $HOME/work
+sudo rbenv exec gem install bundler
+source $HOME/.zprofile

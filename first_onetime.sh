@@ -88,9 +88,12 @@ sudo yum -y remove postgresql-server postgresql-contrib postgresql-devel
 sudo rm -rf /usr/lib64/pgsql /var/lib/pgsql && sudo userdel postgres
 sudo yum -y install postgresql-server postgresql-contrib postgresql-devel
 sudo postgresql-setup initdb
-touch temp.conf
-sudo sed -e 's/\(peer\|ident\)$/md5/g' /var/lib/pgsql/data/pg_hba.conf > temp.conf
-sudo mv temp.conf /var/lib/pgsql/data/pg_hba.conf
+touch temp1.conf
+touch temp2.conf
+sudo sed -e 's/\peer$/trust/g' /var/lib/pgsql/data/pg_hba.conf > temp1.conf
+sudo sed -e 's/\ident$/md5/g' temp1.conf > temp2.conf
+sudo mv temp2.conf /var/lib/pgsql/data/pg_hba.conf
+rm temp1.conf
 sudo systemctl start postgresql
 sudo systemctl enable postgresql
 # TODO

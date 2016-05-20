@@ -8,8 +8,13 @@
 
 cd $HOME
 sudo yum -y update
-sudo yum -y install mlocate zsh tmux openssl-devel readline-devel zlib-devel sqlite-devel postgresql-server postgresql-contrib postgresql-devel lsof
-sudo updatedb
+sudo curl http://repo.mongodb.org/yum/redhat/mongodb-org.repo -o /etc/yum.repos.d/mongodb.repo
+sudo yum -y install mlocate zsh tmux openssl-devel readline-devel zlib-devel sqlite-devel lsof mongodb-org
+sudo setenforce 0
+sudo systemctl stop firewalld
+sudo systemctl disable firewalld
+sudo systemctl start mongod.service
+sudo systemctl enable mongod.service
 git clone git@github.com:ikneg/dotfiles.git
 cd $HOME/dotfiles
 git pull
@@ -79,6 +84,9 @@ mkdir $HOME/work
 sudo rbenv exec gem install bundler
 sudo rbenv exec gem install sqlite3
 source $HOME/.zprofile
+sudo yum -y remove postgresql-server postgresql-contrib postgresql-devel
+sudo rm -rf /usr/lib64/pgsql /var/lib/pgsql && sudo userdel postgres
+sudo yum -y install postgresql-server postgresql-contrib postgresql-devel
 sudo postgresql-setup initdb
 touch temp.conf
 sudo sed -e 's/\(peer\|ident\)$/md5/g' /var/lib/pgsql/data/pg_hba.conf > temp.conf
@@ -87,4 +95,4 @@ sudo systemctl start postgresql
 sudo systemctl enable postgresql
 # TODO
 # https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-centos-7
-
+# railsで使うならpostgres権限でpg_hda.confのpeer修正

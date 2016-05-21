@@ -9,7 +9,8 @@
 cd $HOME
 sudo yum -y update
 sudo curl http://repo.mongodb.org/yum/redhat/mongodb-org.repo -o /etc/yum.repos.d/mongodb.repo
-sudo yum -y install mlocate zsh tmux openssl-devel readline-devel zlib-devel sqlite-devel lsof mongodb-org
+sudo yum -y install epel-release
+sudo yum -y install mlocate zsh tmux openssl-devel readline-devel zlib-devel sqlite-devel lsof mongodb-org tig
 sudo setenforce 0
 sudo systemctl stop firewalld
 sudo systemctl disable firewalld

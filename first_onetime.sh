@@ -8,14 +8,31 @@
 
 cd $HOME
 sudo yum -y update
-sudo curl http://repo.mongodb.org/yum/redhat/mongodb-org.repo -o /etc/yum.repos.d/mongodb.repo
+
 sudo yum -y install epel-release
-sudo yum -y install mlocate zsh tmux openssl-devel readline-devel zlib-devel sqlite-devel lsof mongodb-org tig
+cd /etc/yum.repos.d
+touch ./mongodb.repo
+sudo tee mongodb.repo <<EOF
+[mongodb]
+name=MongoDB Repository
+baseurl=http://downloads-distro.mongodb.org/repo/redhat/os/x86_64/
+gpgcheck=0
+enabled=1
+EOF
+cd $HOME
+sudo yum -y install mlocate zsh tmux openssl-devel readline-devel zlib-devel sqlite-devel lsof mongodb-org tig nodejs npm
+sudo systemctl start mongod.service
+sudo /sbin/chkconfig mongod on
+sudo npm install -g jsfmt
+sudo npm install -g sails
+sudo npm install -g node-dev
+sudo npm install -g pm2
 sudo setenforce 0
 sudo systemctl stop firewalld
 sudo systemctl disable firewalld
-sudo systemctl start mongod.service
-sudo systemctl enable mongod.service
+sudo mkdir /data
+sudo mkdir /data/db
+sudo chmod 777 /data/db
 git clone git@github.com:ikneg/dotfiles.git
 cd $HOME/dotfiles
 git pull

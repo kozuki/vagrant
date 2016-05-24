@@ -102,20 +102,12 @@ mkdir $HOME/work
 sudo rbenv exec gem install bundler
 sudo rbenv exec gem install sqlite3
 source $HOME/.zprofile
-sudo yum -y remove postgresql-server postgresql-contrib postgresql-devel
+sudo yum -y remove postgresql-server postgresql-contrib postgresql-devel postgresql-libs.x86_64 postgresql-libs.x86_64
 sudo rm -rf /usr/lib64/pgsql /var/lib/pgsql && sudo userdel postgres
 sudo yum -y install postgresql-server postgresql-contrib postgresql-devel
-sudo postgresql-setup initdb
-touch temp1.conf
-touch temp2.conf
-sudo sed -e 's/\peer$/trust/g' /var/lib/pgsql/data/pg_hba.conf > temp1.conf
-sudo sed -e 's/\ident$/md5/g' temp1.conf > temp2.conf
-sudo mv temp2.conf /var/lib/pgsql/data/pg_hba.conf
-sudo chown -R postgres:postgres /var/lib/pgsql/data/pg_hba.conf
-rm temp1.conf
+sudo mkdir -p /var/lib/pgsql/data
+sudo chown postgres:postgres /var/lib/pgsql/data
+sudo -u postgres initdb  -D '/var/lib/pgsql/data'
 sudo systemctl start postgresql
 sudo systemctl enable postgresql
 sudo timedatectl set-timezone Asia/Tokyo
-# TODO
-# https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-centos-7
-# railsで使うならpostgres権限でpg_hda.confのpeer修正

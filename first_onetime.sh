@@ -91,8 +91,8 @@ export PATH=$RBENV_ROOT/bin:$PATH
 eval "$(rbenv init -)"
 __EOT__'
 fi
-sudo rbenv install 2.2.3
-sudo rbenv global 2.2.3
+sudo rbenv install 2.3.1
+sudo rbenv global 2.3.1
 sudo rbenv rehash
 curl -L -O https://github.com/peco/peco/releases/download/v0.2.0/peco_linux_amd64.tar.gz
 tar -zxvf peco_linux_amd64.tar.gz
@@ -111,9 +111,11 @@ touch temp2.conf
 sudo sed -e 's/\peer$/trust/g' /var/lib/pgsql/data/pg_hba.conf > temp1.conf
 sudo sed -e 's/\ident$/md5/g' temp1.conf > temp2.conf
 sudo mv temp2.conf /var/lib/pgsql/data/pg_hba.conf
+sudo chown -R postgres:postgres /var/lib/pgsql/data/pg_hba.conf
 rm temp1.conf
 sudo systemctl start postgresql
 sudo systemctl enable postgresql
+sudo timedatectl set-timezone Asia/Tokyo
 # TODO
 # https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-centos-7
 # railsで使うならpostgres権限でpg_hda.confのpeer修正

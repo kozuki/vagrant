@@ -113,3 +113,9 @@ sudo -u postgres initdb  -D '/var/lib/pgsql/data'
 sudo systemctl start postgresql.service
 sudo systemctl enable postgresql.service
 sudo timedatectl set-timezone Asia/Tokyo
+curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
+unzip awscli-bundle.zip
+sudo ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
+echo '***********************************'
+echo 'aws configureを手動で実行して下さい'
+echo '***********************************'

@@ -10,6 +10,8 @@ cd $HOME
 sudo yum -y update
 
 sudo yum -y install epel-release
+rpm -Uvh http://download.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm
+sudo yum -y install the_silver_searcher
 cd /etc/yum.repos.d
 touch ./mongodb.repo
 sudo tee mongodb.repo <<EOF
@@ -108,6 +110,6 @@ sudo yum -y install postgresql-server postgresql-contrib postgresql-devel
 sudo mkdir -p /var/lib/pgsql/data
 sudo chown postgres:postgres /var/lib/pgsql/data
 sudo -u postgres initdb  -D '/var/lib/pgsql/data'
-sudo systemctl start postgresql
-sudo systemctl enable postgresql
+sudo systemctl start postgresql.service
+sudo systemctl enable postgresql.service
 sudo timedatectl set-timezone Asia/Tokyo
